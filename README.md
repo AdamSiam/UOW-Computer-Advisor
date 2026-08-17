@@ -1,4 +1,4 @@
-# UOW Laptop Recommendation Advisor
+# UOW Computer Advisor
 
 > **A Web-Based Decision Support System for Academic Computing Device Recommendations**  
 > Designed for University of Wollongong (UOW) Malaysia students and faculty administrators.
@@ -36,7 +36,7 @@
 
 ---
 
-## 📌 Project Overview
+##Project Overview
 
 Selecting the right laptop for university coursework is often challenging for students entering technical disciplines (such as Computer Science, Software Engineering, Game Development, Data Science, or Digital Media). Overspending on unnecessary hardware or purchasing underpowered machines that cannot run required virtual machines, IDEs, or 3D rendering engines leads to frustration.
 
@@ -44,9 +44,9 @@ The **UOW Laptop Recommendation Advisor** is a full-stack, syllabus-grounded dec
 
 ---
 
-## ✨ Key Capabilities
+##Key Capabilities
 
-### 👨‍🎓 Student Decision Portal
+###Student Decision Portal
 - **Guided 3-Step Recommendation Wizard**:
   - **Step 1**: Select Faculty & Academic Programme (e.g., *Bachelor of Computer Science (Hons)*).
   - **Step 2**: Configure budget limit (MYR), hardware priorities (Portability vs. Battery), preferred device format (Clamshell vs. 2-in-1), and brand preferences.
@@ -64,7 +64,7 @@ The **UOW Laptop Recommendation Advisor** is a full-stack, syllabus-grounded dec
 - **Feedback & Rating Mechanism**:
   - Submit user feedback and recommendation accuracy ratings directly to faculty administrators.
 
-### 🛡️ Administrative Management Console
+###Administrative Management Console
 - **Role-Based Access Control (RBAC)**:
   - Secure credential authentication separating student users from system administrators.
 - **Academic Programme & Requirement Profile Mapping**:
@@ -77,7 +77,7 @@ The **UOW Laptop Recommendation Advisor** is a full-stack, syllabus-grounded dec
 
 ---
 
-## 🏗️ System Architecture
+##System Architecture
 
 ```
                                   ┌────────────────────────┐
@@ -101,7 +101,7 @@ The **UOW Laptop Recommendation Advisor** is a full-stack, syllabus-grounded dec
 
 ---
 
-## 🧮 Hardware Scoring & Evaluation Engine
+##Hardware Scoring & Evaluation Engine
 
 The recommendation engine evaluates devices across multiple weighted criteria:
 1. **Academic Syllabus Compliance ($S_{\text{req}}$)**: Evaluates CPU performance, RAM capacity, dedicated GPU VRAM, and storage type against minimum and recommended thresholds defined for the academic programme.
@@ -113,7 +113,7 @@ $$\text{Final Score} = w_1 S_{\text{req}} + w_2 S_{\text{budget}} + w_3 S_{\text
 
 ---
 
-## 💻 Technology Stack
+##Technology Stack
 
 | Layer | Technologies |
 | :--- | :--- |
@@ -170,7 +170,7 @@ Open your browser at `http://localhost:3000`.
 
 ---
 
-## 📦 Production Build & Deployment
+##Production Build & Deployment
 
 ### Building for Production
 
@@ -201,7 +201,7 @@ npm start
 
 ---
 
-## 📂 Project Structure
+##Project Structure
 
 ```
 ├── public/                     # Static web assets and icons
@@ -232,7 +232,7 @@ npm start
 
 ---
 
-## 🔌 REST API Documentation
+##REST API Documentation
 
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
@@ -251,7 +251,7 @@ npm start
 
 ---
 
-## 🧪 Code Quality & Linting
+##Code Quality & Linting
 
 Run TypeScript type verification:
 
@@ -263,4 +263,4 @@ npm run lint
 
 ## 📄 License
 
-This project is developed for educational and academic decision-support purposes at the University of Wollongong Malaysia. Distributed under the MIT License.
+
