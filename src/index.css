@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Default comfortable enlarged font scale for enhanced legibility & eye comfort */
+  --font-scale: 1.10;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  font-size: calc(16px * var(--font-scale, 1.10));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+/* Accessibility Font Size Scales */
+html[data-font-size="normal"] {
+  --font-scale: 1.00;
+}
+
+html[data-font-size="large"] {
+  --font-scale: 1.10; /* Default: +10% larger */
+}
+
+html[data-font-size="xlarge"] {
+  --font-scale: 1.20; /* Extra Large: +20% larger for eye strain relief */
+}
+
+html[data-font-size="huge"] {
+  --font-scale: 1.32; /* High Visibility: +32% larger */
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+/* Improve contrast and readability for micro badges and chips */
+button, input, select, textarea {
+  font-family: inherit;
+}
