@@ -185,6 +185,12 @@ export interface Feedback {
   id: number;
   user_id: number | null;
   user_name?: string;
+  user_type?: 'registered_student' | 'guest';
+  is_verified_student?: boolean;
+  student_id?: string;
+  faculty_name?: string;
+  programme_name?: string;
+  category?: string;
   saved_recommendation_id: number | null;
   rating: number; // 1-5
   comment: string;
