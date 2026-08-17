@@ -1,0 +1,8 @@
+{
+  "name": "UOW Computer Advisor",
+  "description": "A Web-Based AI-Assisted Decision Support System for Computing Device Recommendations for UOW Malaysia Students",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
