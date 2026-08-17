@@ -153,9 +153,8 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="min-w-0 flex items-center space-x-1.5 sm:space-x-2">
               <div className="min-w-0">
-                <span className="font-extrabold text-xs sm:text-base text-slate-900 dark:text-white tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate max-w-[110px] xs:max-w-[160px] sm:max-w-none">
-                  <span className="md:hidden">UOW Advisor</span>
-                  <span className="hidden md:inline">UOW Computer Advisor</span>
+                <span className="font-extrabold text-xs xs:text-sm sm:text-base text-slate-900 dark:text-white tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
+                  UOW Computer Advisor
                 </span>
                 <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 hidden xl:block leading-tight">
                   Laptop Decision Support System
