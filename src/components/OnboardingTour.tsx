@@ -312,6 +312,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
     const isMobile = viewportWidth < 640;
 
     if (!targetRect) {
+      if (isMobile) {
+        return {
+          bottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
+          left: '12px',
+          right: '12px',
+          margin: '0 auto',
+        };
+      }
       return {
         top: '50%',
         left: '50%',
@@ -320,23 +328,24 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
     }
 
     if (isMobile) {
-      // If target is in top half (e.g. Header nav tabs), place dialog near bottom
-      if (targetRect.top < viewportHeight * 0.5) {
+      // On mobile phones: if target is in bottom 35% of screen, dock card at top; otherwise dock at bottom
+      if (targetRect.top > viewportHeight * 0.65) {
         return {
-          bottom: '16px',
-          left: '50%',
-          transform: 'translateX(-50%)',
+          top: 'max(16px, env(safe-area-inset-top, 16px))',
+          left: '12px',
+          right: '12px',
+          margin: '0 auto',
         };
       }
-      // If target is near bottom (e.g. Floating bot), place dialog near top
       return {
-        top: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        bottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
+        left: '12px',
+        right: '12px',
+        margin: '0 auto',
       };
     }
 
-    // Desktop positioning
+    // Desktop positioning: Smart anchor above or below target
     if (targetRect.top < viewportHeight * 0.45) {
       // Below target
       const topPos = Math.min(viewportHeight - 360, targetRect.bottom + 16);
@@ -415,7 +424,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
       {/* Guide Dialog Modal */}
       <div
         style={modalPos}
-        className="fixed z-50 max-w-lg w-[92%] sm:w-[480px] bg-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-700/90 overflow-hidden backdrop-blur-xl transition-[top,left,bottom,right] duration-200 ease-out"
+        className="fixed z-50 w-[calc(100vw-24px)] max-w-[460px] sm:w-[480px] bg-slate-900/95 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl border border-slate-700/90 overflow-hidden backdrop-blur-xl transition-[top,left,bottom,right] duration-200 ease-out max-h-[82vh] flex flex-col justify-between"
       >
         {/* Top Decorative Glow */}
         <div className="absolute top-0 right-0 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -429,59 +438,61 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
+            className="overflow-y-auto pr-0.5 space-y-3"
           >
-            {/* Header & Close Button */}
-            <div className="flex items-start justify-between gap-4 mb-3.5 relative z-10">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                  {currentStep.icon || <Sparkles className="w-5 h-5 text-blue-400" />}
-                </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      {currentRole === 'administrator' ? 'Admin Guided Walkthrough' : 'Student Platform Guide'}
-                    </span>
-                    {currentStep.targetId && (
-                      <button
-                        type="button"
-                        onClick={scrollToTarget}
-                        title="Re-center the highlighted element"
-                        className="text-[10px] font-bold text-blue-400 hover:text-blue-300 underline cursor-pointer"
-                      >
-                        Center Tab
-                      </button>
-                    )}
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-extrabold text-white mt-1 leading-snug">
-                    {currentStep.title}
-                  </h3>
-                </div>
+            {/* Top Bar: Badge on left, Close on right */}
+            <div className="flex items-center justify-between gap-2 relative z-10">
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center space-x-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  <span>{currentRole === 'administrator' ? 'Admin Guide' : 'Student Guide'}</span>
+                </span>
+                {currentStep.targetId && (
+                  <button
+                    type="button"
+                    onClick={scrollToTarget}
+                    title="Highlight tab in view"
+                    className="text-[10px] font-semibold text-slate-400 hover:text-blue-300 transition-colors cursor-pointer"
+                  >
+                    • View Tab
+                  </button>
+                )}
               </div>
 
               <button
                 onClick={handleComplete}
-                title="Skip Tour"
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                title="Close Guide"
+                className="w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Title & Icon */}
+            <div className="flex items-center space-x-3 relative z-10">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                {currentStep.icon || <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />}
+              </div>
+              <h3 className="text-sm sm:text-lg font-extrabold text-white leading-snug">
+                {currentStep.title}
+              </h3>
+            </div>
+
             {/* Description Content */}
-            <div className="relative z-10 mb-5 text-sm text-slate-300 leading-relaxed pl-0.5">
+            <div className="relative z-10 text-xs sm:text-sm text-slate-300 leading-relaxed">
               {currentStep.description}
             </div>
           </motion.div>
         </AnimatePresence>
 
         {/* Progress Indicators & Action Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-800 relative z-10">
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-800/80 relative z-10 shrink-0">
           {/* Step Counter & Dots */}
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-bold text-slate-400">
-              Step {currentStepIndex + 1} of {steps.length}
+            <span className="text-[11px] font-bold text-slate-400 whitespace-nowrap">
+              {currentStepIndex + 1}/{steps.length}
             </span>
-            <div className="flex items-center space-x-1 pl-1">
+            <div className="flex items-center space-x-1">
               {steps.map((s, idx) => (
                 <button
                   key={s.id}
@@ -489,7 +500,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
                   title={`Go to step ${idx + 1}`}
                   className={`h-1.5 rounded-full transition-all cursor-pointer ${
                     idx === currentStepIndex
-                      ? 'w-5 bg-blue-500'
+                      ? 'w-4 sm:w-5 bg-blue-500'
                       : 'w-1.5 bg-slate-700 hover:bg-slate-500'
                   }`}
                 />
@@ -498,22 +509,22 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {currentStepIndex > 0 && (
               <button
                 onClick={handlePrev}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1"
+                className="px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Previous</span>
+                <span>Prev</span>
               </button>
             )}
 
             <button
               onClick={handleNext}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-blue-500/25 transition-all cursor-pointer flex items-center space-x-1.5"
+              className="px-3.5 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-md shadow-blue-500/25 transition-all cursor-pointer flex items-center space-x-1"
             >
-              <span>{isLastStep ? 'Get Started' : 'Next'}</span>
+              <span>{isLastStep ? 'Finish' : 'Next'}</span>
               {isLastStep ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
             </button>
           </div>

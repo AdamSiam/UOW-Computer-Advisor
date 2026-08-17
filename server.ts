@@ -1203,24 +1203,97 @@ app.delete('/api/saved-recommendations/:id', (req, res) => {
   res.json({ success: true, message: 'Saved recommendation removed successfully.' });
 });
 
-// --- FEEDBACK ---
+// --- FEEDBACK & RATINGS AUDIT (WITH GUEST VS REGISTERED STUDENT DIFFERENTIATION & ANTI-SPAM) ---
+const guestSubmissionIps = new Map<string, number>();
+
 app.get('/api/feedback', (req, res) => {
+  const { type } = req.query;
+  if (type === 'verified') {
+    return res.json(feedbackList.filter((f) => f.is_verified_student));
+  }
+  if (type === 'guest') {
+    return res.json(feedbackList.filter((f) => !f.is_verified_student));
+  }
   res.json(feedbackList);
 });
 
 app.post('/api/feedback', (req, res) => {
-  const { saved_recommendation_id, rating, comment, user_name } = req.body;
+  const {
+    saved_recommendation_id,
+    rating,
+    comment,
+    user_name,
+    user_id,
+    user_type,
+    is_verified_student,
+    student_id,
+    faculty_name,
+    programme_name,
+    category,
+    honeypot_bot_check,
+  } = req.body;
+
+  // 1. Anti-Bot Honeypot Protection
+  if (honeypot_bot_check && String(honeypot_bot_check).trim().length > 0) {
+    return res.status(400).json({ error: 'Automated spam detected and rejected.' });
+  }
+
+  // 2. Comment Validation
+  const trimmedComment = String(comment || '').trim();
+  if (trimmedComment.length < 3) {
+    return res.status(400).json({ error: 'Feedback comment is too short. Please provide at least 3 characters.' });
+  }
+  if (trimmedComment.length > 2000) {
+    return res.status(400).json({ error: 'Feedback comment exceeds 2000 characters maximum.' });
+  }
+
+  // 3. Guest Rate Limiting (Anti-Spam)
+  const clientIp = req.ip || req.socket.remoteAddress || 'unknown-ip';
+  const isGuest = !is_verified_student && !user_id;
+
+  if (isGuest) {
+    const lastSubmitTime = guestSubmissionIps.get(clientIp);
+    const now = Date.now();
+    if (lastSubmitTime && now - lastSubmitTime < 10000) { // 10s cooldown
+      return res.status(429).json({ error: 'Please wait a few seconds before submitting additional feedback.' });
+    }
+    guestSubmissionIps.set(clientIp, now);
+  }
+
+  // 4. Verify Student Status
+  const isVerified = Boolean(is_verified_student && user_id);
+  const parsedRating = Math.max(1, Math.min(5, Number(rating) || 5));
+
   const newFeedback: Feedback = {
     id: Date.now(),
-    user_id: 101,
-    user_name: user_name || 'Student',
+    user_id: isVerified ? Number(user_id) : null,
+    user_name: user_name?.trim() || (isVerified ? 'UOW Student' : 'Guest Student'),
+    user_type: isVerified ? 'registered_student' : 'guest',
+    is_verified_student: isVerified,
+    student_id: isVerified ? student_id : undefined,
+    faculty_name: faculty_name || undefined,
+    programme_name: programme_name || undefined,
+    category: category || '🎯 Recommendation Accuracy',
     saved_recommendation_id: saved_recommendation_id ? Number(saved_recommendation_id) : null,
-    rating: Number(rating) || 5,
-    comment: comment || '',
+    rating: parsedRating,
+    comment: trimmedComment,
     created_at: new Date().toISOString(),
   };
+
   feedbackList.unshift(newFeedback);
   res.status(201).json(newFeedback);
+});
+
+// Admin endpoint to remove spam or inappropriate feedback
+app.delete('/api/feedback/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const initialLen = feedbackList.length;
+  feedbackList = feedbackList.filter((f) => f.id !== id);
+  if (feedbackList.length < initialLen) {
+    res.json({ message: 'Feedback deleted successfully', id });
+  } else {
+    res.status(404).json({ error: 'Feedback item not found' });
+  }
 });
 
 // --- BOT CHAT & GEMINI EXPLANATION ENDPOINTS ---
